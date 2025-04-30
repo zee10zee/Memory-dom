@@ -1,0 +1,64 @@
+
+<%- include('../partials/header.ejs') %>
+
+      <div class="container middleForm">
+        <h1>Update <%= post.posttitle%></h1>
+        <form action="/api/post/<%= post.id%>/update" method="POST" enctype="multipart/form-data">
+            <input type="text" name="editTitle"  id="editTitle" required class="editTitle" value="<%=  post.posttitle%>">
+
+            <textarea name="description" required id="description" class="description"><%= post.description%></textarea>
+
+            <input type="file" accept="image/*" name="editImage" required id="editImage" style="display: none;">
+         
+            <div class=" niceOutline imgPreview-Logo ">
+              <i class="editPic bi bi-image-fill fs-1"> Update image</i>
+
+           <img class="previewEditImage" src="/<%= post.postimage.replace(/\\/g, '/') %>" alt="<%= post.postimage%>" style="display: block;">
+            </div>
+            <br>
+
+            <button type="submit">save</button>
+        </form>
+      </div>
+
+      <%- include('../partials/footer.ejs') %>
+      <script>
+        const editImageLogo = document.querySelector('.editPic')
+  
+        const uploadEditInput = document.querySelector('#editImage')
+        const editPreview = document.querySelector('.previewEditImage')
+
+        // preview post imag e
+editImageLogo.addEventListener('click', (e)=>{
+    e.preventDefault()
+    uploadEditInput.click()
+});
+
+uploadEditInput.addEventListener('change', ()=>{
+    const file = uploadEditInput.files[0]
+
+    const reader = new FileReader()
+    console.log(file, reader)
+
+    reader.onload = ()=>{
+      editPreview.src = reader.result
+    }
+
+    reader.readAsDataURL(file)
+})
+
+
+// textarea height adoption
+
+// const textareas = document.querySelectorAll('textarea')
+
+// // dynamicising text area height
+// textareas.forEach((area)=>{
+//     area.addEventListener('input', function(){
+//         this.style.height =  "auto"
+//         this.style.height = area.scrollHeight + "px";
+//     })
+ 
+// })
+
+      </script>

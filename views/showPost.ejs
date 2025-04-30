@@ -1,0 +1,10 @@
+<%- include('../partials/header.ejs') %>
+
+<div class="container">
+    <h1>the post <%=post.posttitle %> </h1>
+    <%= new Date(post.created_at).toLocaleDateString()%>
+    <p><%= post.description %></p>
+    <img src="/<%= post.postimage.replace(/\\/g, '/') %>" alt="">
+</div>
+
+<%- include('../partials/footer.ejs') %>

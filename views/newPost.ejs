@@ -1,0 +1,58 @@
+<%- include('../partials/header.ejs') %>
+
+      <div class="container middleForm">
+        <h1>Create new memory</h1><br>
+        <form action="/api/post/new" method="post" enctype="multipart/form-data">
+            <input type="text" name="postTitle" required id="postTitle" class="postTitle" placeholder="add title">
+
+            <textarea name="description" required id="description" class="description" placeholder="add the memory"></textarea>
+
+            <input type="file" accept="image/*" name="postImage" required id="postImage" style="display: none;">
+            <div class=" niceOutline ">
+              <i class="picLogo bi bi-image-fill fs-1"> Add image</i>
+
+              <img class="previewImage" src="https://images.unsplash.com/photo-1742836531236-0e439730dd27?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"  alt="" style="display: none;">
+            </div>
+
+            <br>
+
+
+            <button type="submit">Add post</button>
+        </form>
+      </div>
+      <%- include('../partials/footer.ejs') %>
+      <script>
+        const uploadInput = document.getElementById('postImage')
+const previewImage = document.querySelector('.previewImage')
+const postUploadLogo = document.querySelector('.picLogo')
+
+
+
+
+// preview new post image 
+postUploadLogo.addEventListener('click', (e)=>{
+    e.preventDefault()
+    uploadInput.click()
+})
+
+const previewUploadImage = (hiddenInput, onEvent, prevImage)=>{
+    hiddenInput.addEventListener(onEvent, ()=>{
+        console.log('you selected a file')
+        const file = hiddenInput.files[0]
+        console.log(file)
+
+        const reader = new FileReader()
+
+        reader.onload = ()=>{
+            console.log(reader.result)
+            prevImage.src = reader.result
+            if(prevImage.style.display === 'none'){
+                prevImage.style.display = "block"
+            }
+        }
+
+        reader.readAsDataURL(file)
+    })
+}
+      previewUploadImage(uploadInput, 'change', previewImage)
+      </script>

@@ -1,0 +1,25 @@
+<%- include('../partials/header.ejs') %>
+    <div class="container">
+        <a href="/api/post/new"><i class="bi bi-plus-circle"></i>New post</a>
+        <h1>posts</h1>
+
+        <% if(posts.length){  %>
+            <% posts.forEach((post)=>{ %>
+                <div class="row">
+                    <h3 class="title"><%= post.posttitle%> <span id="date"><%= new Date(post.created_at).toLocaleDateString('en-US',{month : 'long', year : 'numeric', day : 'numeric'})%>
+                    </span></h3>
+                    <p><%= post.description.substring(0, 100)%> <a href="/api/post/<%= post.id%>/">Read more ...</a></p>
+                    <img src="<%= post.postimage %>" alt="">
+                    <div class="editDeleteBtns">
+                        <a href="/api/post/<%= post.id  %>/edit">Edit</a>
+                        <form action="/api/post/<%=post.id %>/delete" method="post">
+                          <button>Delete</button>
+                        </form>
+                    </div>
+                </div>
+                <%}) %>
+        <% }else{ %>
+           <h1>No posts yet !</h1>
+        <% } %>
+    </div>
+    <%- include('../partials/footer.ejs') %>
