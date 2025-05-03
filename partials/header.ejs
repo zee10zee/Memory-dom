@@ -15,19 +15,26 @@
     <title>Memory-domApp</title>
 </head>
 <body>
+
+ 
          <!-- Navbar -->
 <nav class="navbar">
     <div class="navbar-left">
       <h2><a href="/">MemoryDom</a></h2>
     </div>
     <div class="navbar-right">
-      <div class="icon">
-        <img src="https://images.unsplash.com/photo-1726056652641-de93ec003289?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Profile">
-      </div>
-      <div class="icon">
-        🔔
-      </div>
-      <a href="/login">Login</a>
-      <a href="/logout">Logout</a>
+      <%if(locals.loggedInUser){ %>
+          <div class="icon">
+            <img src="<%= loggedInUser.profilepicture%>" alt="Profile">
+          </div>
+          <div class="icon">
+            🔔
+          </div>
+          <form action="/logout" method="POST">
+            <button>Log out</button>
+          </form>
+      <% }else{ %>
+          <a href="/login">Login</a>
+       <% } %>
     </div>
   </nav>

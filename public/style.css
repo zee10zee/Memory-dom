@@ -60,6 +60,34 @@
     border: 2px solid #3498db;
   }
 
+  /* radio buttons */
+
+  .radio-button{
+    display: flex;
+    align-items: center;
+    width: 33%;
+  }
+
+  input[type="radio"]{
+     margin: 10px;
+     width: 100%;
+  }
+
+
+  #signupForm{
+   display: flex;
+   gap: 30px;
+   align-items: center;
+   flex-direction: column;
+   justify-content: center;
+  }
+
+  .birth-date select{
+    width: 32%;
+  }
+
+ 
+
   .bottom-nav{
     display: none;
   }

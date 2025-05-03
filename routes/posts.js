@@ -2,47 +2,52 @@ import express from "express"
 import pool from "../postgres/db.js"
 import multer from "multer"
 import path from "path"
+import upload from "../storage.js"
+// end of multer
+const router = express.Router()
 
-function createPosts(rootDir){
-    const storageSetup = {
-        destination : (req,file, cb)=>{
-           cb(null, path.join(rootDir,'public/uploads'))
-        },
-        filename : (req,file,cb)=>{
-     //    1E9 = 1000000000
-         const fileExtension = path.extname(file.originalname)
-           const customizedName = Date.now() + "-" + Math.floor(Math.random() * 1E9)
-         //   cb says if no error/null ? give the below name to the image
-           cb(null, file.fieldname + "-" + customizedName + fileExtension)
-        }  
-     }
-     // multer setup
-     const storage = multer.diskStorage(storageSetup)
-     
-     const upload = multer({storage:storage})
-     const router = express.Router()
-     
-     
-      console.log(router)
-     
+// pool.query('DELETE FROM users').then((data)=> console.log('deleted')).catch((err)=> console.log(err));
+
      router.get('/', async(req,res)=>{
-         const posts = await pool.query('SELECT * FROM posts ORDER BY created_at DESC')
-         res.render('home.ejs', {posts : posts.rows})
-     })
+         try{
+              const postsAndCreators = await pool.query(`
+                SELECT posts.* ,
+                users.username,
+                users.lastname,
+                users.profilepicture
+                FROM posts 
+                LEFT JOIN users 
+                ON posts.user_id = users.id ORDER BY posts.created_at DESC `)
+         if(postsAndCreators.rows.length === 0){
+            console.log('no posts found')
+         }
+
+         console.log(JSON.stringify(postsAndCreators.rows, null, 2))
+
+         
+         res.render('home.ejs', {posts : postsAndCreators.rows})
+         
+        
+         }catch(err){
+            console.log(err)
+            return res.status(500).send(err)
+         }
+     });
      
-     router.get('/api/post/new',(req,res)=>{
+     router.get('/api/post/new', validateLogin,(req,res)=>{
          res.render('newPost.ejs')
      })
      
-     router.post('/api/post/new', upload.single('postImage'), async(req,res)=>{
+     router.post('/api/post/new', validateLogin,upload.single('postImage'), async(req,res)=>{
          try{
          const body = {
              postTitle : req.body.postTitle.trim(),
              description : req.body.description.trim(),
              postImage : path.join('uploads', req.file.filename)
          }
+
+
      
-        
          const insertQ = `INSERT INTO posts(postTitle, description, postimage) VALUES(LOWER($1), LOWER($2) , $3) RETURNING *;`
      
          const newPost = await pool.query(insertQ, [body.postTitle, body.description, body.postImage])
@@ -78,8 +83,10 @@ function createPosts(rootDir){
      
      // edit post
      
-     router.get('/api/post/:id/edit', async(req,res)=>{
+     router.get('/api/post/:id/edit',validateLogin, async(req,res)=>{
          const id = Number(req.params.id)
+
+
      
          const post = await pool.query('SELECT * FROM posts where id = $1', [id]);
      res.render('editPost.ejs', {post : post.rows[0]})
@@ -88,7 +95,7 @@ function createPosts(rootDir){
      
      // update post
      
-     router.post('/api/post/:id/update', upload.single('editImage'), async(req,res)=>{
+     router.post('/api/post/:id/update', validateLogin, upload.single('editImage'), async(req,res)=>{
          const id = Number(req.params.id)
          
          try{
@@ -117,7 +124,7 @@ function createPosts(rootDir){
      
      // delete post
      
-     router.post('/api/post/:id/delete', async(req,res)=>{
+     router.post('/api/post/:id/delete', validateLogin, async(req,res)=>{
          const id = Number(req.params.id)
      
          try{
@@ -136,7 +143,13 @@ function createPosts(rootDir){
          }
      })
 
-     return router;
-}
+     function validateLogin(req,res,next){
+        const loggedInUser = req.session.userId;
+        if(!loggedInUser){
+            console.log('please log in first ')
+            return res.redirect('/login')
+        }
+        next()
+     }
 
-export default createPosts;
+export default router;

@@ -1,12 +1,12 @@
 <%- include('../../partials/header.ejs') %>
  <div class="container"style="display : flex; flex-direction : column; align-items : center; justify-content : center">
     <h1 style="margin: 20px auto;">Please Login </h1>
-    <form action="/api/signup" method="post">
+    <form action="/api/login" method="post">
         <input type="text" name="username" id="username" required class="username" placeholder="Enter your name">
         <input type="email" name="useremail" id="useremail" required placeholder="your email">
         <br>
         <button>Login</button>
-        <a href="/signUp">Not registered ?</a>
+        <a href="/api/signUp">Not registered ?</a>
     </form>
  </div>
 <%- include('../../partials/footer.ejs') %>
